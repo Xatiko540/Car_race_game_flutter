@@ -52,25 +52,29 @@ class _MainMenuOverlayState extends State<MainMenuOverlay> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      CharacterButton(
-                        character: Character.tesla,
-                        selected: character == Character.tesla,
-                        onSelectChar: () {
-                          setState(() {
-                            character = Character.tesla;
-                          });
-                        },
-                        characterWidth: characterWidth,
+                      Flexible(  // <== Added Flexible
+                        child: CharacterButton(
+                          character: Character.tesla,
+                          selected: character == Character.tesla,
+                          onSelectChar: () {
+                            setState(() {
+                              character = Character.tesla;
+                            });
+                          },
+                          characterWidth: characterWidth,
+                        ),
                       ),
-                      CharacterButton(
-                        character: Character.farari,
-                        selected: character == Character.farari,
-                        onSelectChar: () {
-                          setState(() {
-                            character = Character.farari;
-                          });
-                        },
-                        characterWidth: characterWidth,
+                      Flexible(  // <== Added Flexible
+                        child: CharacterButton(
+                          character: Character.farari,
+                          selected: character == Character.farari,
+                          onSelectChar: () {
+                            setState(() {
+                              character = Character.farari;
+                            });
+                          },
+                          characterWidth: characterWidth,
+                        ),
                       ),
                     ],
                   ),

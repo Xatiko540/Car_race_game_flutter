@@ -4,22 +4,15 @@ import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:mario_game/game/car_race.dart';
 
-enum PlayerState {
-  left,
-  right,
-  center,
-}
+enum PlayerState { left, right, center }
 
 class Player extends SpriteGroupComponent<PlayerState>
     with HasGameRef<CarRace>, KeyboardHandler, CollisionCallbacks {
   Player({
     required this.character,
     this.moveLeftRightSpeed = 700,
-  }) : super(
-          size: Vector2(79, 109),
-          anchor: Anchor.center,
-          priority: 1,
-        );
+  }) : super(size: Vector2(79, 109), anchor: Anchor.center, priority: 1);
+
   double moveLeftRightSpeed;
   Character character;
 
@@ -38,16 +31,16 @@ class Player extends SpriteGroupComponent<PlayerState>
 
   @override
   void update(double dt) {
-    if (gameRef.gameManager.isIntro || gameRef.gameManager.isGameOver) return;
+    if (game.gameManager.isIntro || game.gameManager.isGameOver) return;
 
     _velocity.x = _hAxisInput * moveLeftRightSpeed;
 
     final double marioHorizontalCenter = size.x / 2;
 
     if (position.x < marioHorizontalCenter) {
-      position.x = gameRef.size.x - (marioHorizontalCenter);
+      position.x = game.size.x - marioHorizontalCenter;
     }
-    if (position.x > gameRef.size.x - (marioHorizontalCenter)) {
+    if (position.x > game.size.x - marioHorizontalCenter) {
       position.x = marioHorizontalCenter;
     }
 
@@ -59,19 +52,16 @@ class Player extends SpriteGroupComponent<PlayerState>
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
-
-    gameRef.onLose();
-    return;
+    game.onLose();
   }
 
   @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     _hAxisInput = 0;
 
     if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
       moveLeft();
     }
-
     if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
       moveRight();
     }
@@ -80,19 +70,13 @@ class Player extends SpriteGroupComponent<PlayerState>
   }
 
   void moveLeft() {
-    _hAxisInput = 0;
-
+    _hAxisInput = movingLeftInput;
     current = PlayerState.left;
-
-    _hAxisInput += movingLeftInput;
   }
 
   void moveRight() {
-    _hAxisInput = 0; // by default not going left or right
-
+    _hAxisInput = movingRightInput;
     current = PlayerState.right;
-
-    _hAxisInput += movingRightInput;
   }
 
   void resetDirection() {
@@ -106,15 +90,15 @@ class Player extends SpriteGroupComponent<PlayerState>
 
   void resetPosition() {
     position = Vector2(
-      (gameRef.size.x - size.x) / 2,
-      (gameRef.size.y - size.y) / 2,
+      (game.size.x - size.x) / 2,
+      (game.size.y - size.y) / 2,
     );
   }
 
   Future<void> _loadCharacterSprites() async {
-    final left = await gameRef.loadSprite('game/${character.name}.png');
-    final right = await gameRef.loadSprite('game/${character.name}.png');
-    final center = await gameRef.loadSprite('game/${character.name}.png');
+    final left = await game.loadSprite('game/${character.name}.png');
+    final right = await game.loadSprite('game/${character.name}.png');
+    final center = await game.loadSprite('game/${character.name}.png');
 
     sprites = <PlayerState, Sprite>{
       PlayerState.left: left,
